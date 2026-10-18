@@ -28,27 +28,27 @@ Update this section by hand at every end-of-day review. Count **verified inciden
 
 | Metric | Value |
 |---|---|
-| Total verified incidents | 2 |
-| Critical + High severity | 0 |
-| Open (Open / Investigating) | 0 |
+| Total verified incidents | 5 |
+| Critical + High severity | 1 (FL-003) |
+| Open (Open / Investigating) | 3 |
 | Workaround Available | 0 |
 | Resolved | 2 |
-| Estimated development time lost | ~10 min |
-| Most frequently affected tool or service | MCP Python SDK (`mcp` 2.3.0) |
+| Estimated development time lost | ~30 min (doc research; CLI access still pending) |
+| Most frequently affected tool or service | Alexa AI CLI / Alexa+ docs (3), MCP Python SDK (2) |
 | Last updated | 2026-10-18 |
 
 **Planned components and whether any friction has been logged for them yet:**
 
 - [x] MCP Python SDK
 - [ ] Streamable HTTP transport
-- [ ] Alexa AI CLI (`alexa-ai configure / new mcp / deploy`)
+- [x] Alexa AI CLI (`alexa-ai configure / new mcp / deploy`)
 - [ ] Deployment / public HTTPS endpoint
 - [ ] DynamoDB
 - [ ] AWS Lambda + EventBridge Scheduler
 - [ ] Amazon Bedrock
 - [ ] Notification provider (SNS / Telegram / email)
 - [ ] Alexa+ simulator web app
-- [ ] Documentation
+- [x] Documentation
 - [ ] Development workflow / tooling
 
 ---
@@ -113,6 +113,9 @@ Environment for FL-001 and FL-002: Windows 11 Home 10.0.26200, Python 3.14.3, `m
 |---|---|---|---|---|---|---|---|---|---|
 | FL-001 | 2026-10-18 (evening IST; exact time not recorded) | Create the MCP server skeleton in Python | 1. `python -m venv .venv` 2. `pip install mcp` (installs 2.3.0) 3. `from mcp.server.fastmcp import FastMCP`, the import used in most MCP tutorials and examples | The import succeeds and the FastMCP server can be used | `ModuleNotFoundError: No module named 'mcp.server.fastmcp'. This is mcp 2.x, where FastMCP was renamed to MCPServer (from mcp.server.mcpserver import MCPServer) and other APIs changed` | Low | Used `from mcp.server.mcpserver import MCPServer`; `@mcp.tool()` and `streamable_http_app()` still work | The error message is excellent because it names the fix. Alexa+ MCP quickstarts and samples should pin an SDK version or show the `mcp` 2.x API so new developers don't hit this on step one | Resolved |
 | FL-002 | 2026-10-18 (evening IST; exact time not recorded) | Write an in-process Streamable HTTP test client | 1. Same environment as FL-001 2. In a test, `import httpx` and pass an `httpx.AsyncClient` to `mcp.client.streamable_http.streamable_http_client` | `httpx` is available, because MCP's HTTP client was historically built on it | `ModuleNotFoundError: No module named 'httpx'`. `mcp` 2.3.0 depends on `httpx2`, and `streamable_http_client` takes `http_client: httpx2.AsyncClient` | Low | `import httpx2 as httpx`. The test then passes and all 5 tools answer in ~4–6 ms | Mention the `httpx` to `httpx2` switch prominently in the SDK migration guide and in client examples | Resolved |
+| FL-003 | 2026-10-18 (evening IST; exact time not recorded) | Install the Alexa AI CLI | 1. Open the MCP Toolkit quickstart (`/docs/alexaplus/add-ons/mcp-toolkit-quickstart`) 2. Step 1 says "Download and install CLI" 3. Search npm for the CLI | A public install command, e.g. `npm install -g <package>` | The quickstart gives no command. The install steps are on a separate page (`set-up-your-development-environment`): `@alexa-ai/cli` is served from a private CodeArtifact registry and needs an IAM user that assumes `AddOn3PDeveloperToolsRead` in Amazon's account, which the page says is granted via "the AWS account you gave the Alexa Solutions Architect". `npm search alexa-ai` instead returns an unrelated third-party package named `alexa-ai` (a WhatsApp bot) | High | Asking hackathon organisers how participants get CLI access; meanwhile building against the official web simulator path and our own simulator | Put the install command, or a clear "access is gated, request it here" link, directly in quickstart step 1. Give hackathon participants a self-serve allowlist. Publish a public placeholder at `@alexa-ai/cli` on npm, and warn about the look-alike `alexa-ai` package | Investigating |
+| FL-004 | 2026-10-18 (evening IST; exact time not recorded) | Check the CLI's OS support | 1. Read the requirements in `set-up-your-development-environment` | Windows listed, or explicitly marked unsupported | Requirements say "macOS Sierra or higher or Ubuntu", Node.js 24+. Windows isn't mentioned; our team develops on Windows 11 | Medium | Not yet tested; fallback options are WSL (Ubuntu) or a Linux cloud shell | State Windows support explicitly, or document WSL as the supported route | Open |
+| FL-005 | 2026-10-18 (evening IST; exact time not recorded) | Decide whether our MCP server needs OAuth | 1. Read "MCP requirements" in the quickstart 2. Read `mcp-toolkit-authentication` | A clear statement of whether a public server with no user accounts can skip auth, and how the server learns which Alexa user is speaking | The quickstart's authentication checklist reads as mandatory (return 401 with no `WWW-Authenticate`, OAuth 2.1 + PKCE S256). The auth page only describes Tier 1 as "if you have a private MCP Server" and Tier 2 for "user-specific tools". Neither page says whether no-auth is allowed or how to identify a user without account linking | Medium | Planning a single-demo-user server first; per-user storage will need Tier 2 account linking | Add a "no-auth / anonymous" row to the auth tier table, and document which user identifier (if any) reaches the server without account linking | Open |
 
 > Add new rows here using the next ID (FL-003, FL-004…). Copy the [template](#6-real-incident-template) for detailed notes.
 
@@ -142,7 +145,7 @@ Suspected issues we haven't confirmed yet. These are **not incidents**. Move one
 | # | Hypothesis | How to confirm or rule out | Owner | Status |
 |---|---|---|---|---|
 | H-1 | Alexa+ access for the MCP toolkit may be limited from India, which would force us to demo with the simulator | Run `alexa-ai configure` and `alexa-ai new mcp` with our account and record the output | | Open |
-| H-2 | It isn't yet clear how Alexa+ identifies the end user to the MCP server, which we need for per-user task storage | Check the MCP Toolkit docs and inspect incoming request headers once connected | | Open |
+| H-2 | ~~How Alexa+ identifies the end user~~: partly answered by FL-005. Per-user identity seems to come only via Tier 2 account linking (OAuth). Still to confirm: whether any user id reaches a no-auth server | Inspect incoming request headers once connected | | Investigating |
 
 ---
 
