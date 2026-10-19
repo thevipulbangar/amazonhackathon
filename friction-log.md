@@ -28,14 +28,14 @@ Update this section by hand at every end-of-day review. Count **verified inciden
 
 | Metric | Value |
 |---|---|
-| Total verified incidents | 5 |
+| Total verified incidents | 6 |
 | Critical + High severity | 1 (FL-003) |
 | Open (Open / Investigating) | 3 |
 | Workaround Available | 0 |
-| Resolved | 2 |
+| Resolved | 3 |
 | Estimated development time lost | ~30 min (doc research; CLI access still pending) |
 | Most frequently affected tool or service | Alexa AI CLI / Alexa+ docs (3), MCP Python SDK (2) |
-| Last updated | 2026-10-18 |
+| Last updated | 2026-10-19 |
 
 **Planned components and whether any friction has been logged for them yet:**
 
@@ -49,7 +49,7 @@ Update this section by hand at every end-of-day review. Count **verified inciden
 - [ ] Notification provider (SNS / Telegram / email)
 - [ ] Alexa+ simulator web app
 - [x] Documentation
-- [ ] Development workflow / tooling
+- [x] Development workflow / tooling
 
 ---
 
@@ -116,6 +116,7 @@ Environment for FL-001 and FL-002: Windows 11 Home 10.0.26200, Python 3.14.3, `m
 | FL-003 | 2026-10-18 (evening IST; exact time not recorded) | Install the Alexa AI CLI | 1. Open the MCP Toolkit quickstart (`/docs/alexaplus/add-ons/mcp-toolkit-quickstart`) 2. Step 1 says "Download and install CLI" 3. Search npm for the CLI | A public install command, e.g. `npm install -g <package>` | The quickstart gives no command. The install steps are on a separate page (`set-up-your-development-environment`): `@alexa-ai/cli` is served from a private CodeArtifact registry and needs an IAM user that assumes `AddOn3PDeveloperToolsRead` in Amazon's account, which the page says is granted via "the AWS account you gave the Alexa Solutions Architect". `npm search alexa-ai` instead returns an unrelated third-party package named `alexa-ai` (a WhatsApp bot) | High | Asking hackathon organisers how participants get CLI access; meanwhile building against the official web simulator path and our own simulator | Put the install command, or a clear "access is gated, request it here" link, directly in quickstart step 1. Give hackathon participants a self-serve allowlist. Publish a public placeholder at `@alexa-ai/cli` on npm, and warn about the look-alike `alexa-ai` package | Investigating |
 | FL-004 | 2026-10-18 (evening IST; exact time not recorded) | Check the CLI's OS support | 1. Read the requirements in `set-up-your-development-environment` | Windows listed, or explicitly marked unsupported | Requirements say "macOS Sierra or higher or Ubuntu", Node.js 24+. Windows isn't mentioned; our team develops on Windows 11 | Medium | Not yet tested; fallback options are WSL (Ubuntu) or a Linux cloud shell | State Windows support explicitly, or document WSL as the supported route | Open |
 | FL-005 | 2026-10-18 (evening IST; exact time not recorded) | Decide whether our MCP server needs OAuth | 1. Read "MCP requirements" in the quickstart 2. Read `mcp-toolkit-authentication` | A clear statement of whether a public server with no user accounts can skip auth, and how the server learns which Alexa user is speaking | The quickstart's authentication checklist reads as mandatory (return 401 with no `WWW-Authenticate`, OAuth 2.1 + PKCE S256). The auth page only describes Tier 1 as "if you have a private MCP Server" and Tier 2 for "user-specific tools". Neither page says whether no-auth is allowed or how to identify a user without account linking | Medium | Planning a single-demo-user server first; per-user storage will need Tier 2 account linking | Add a "no-auth / anonymous" row to the auth tier table, and document which user identifier (if any) reaches the server without account linking | Open |
+| FL-006 | 2026-10-19 ~16:15 IST | Configure the AWS CLI on Windows | 1. `winget install Amazon.AWSCLI` while VS Code is open 2. In a new VS Code terminal, run `aws configure` 3. Type values at the prompts | `aws` is found; `aws configure` rejects invalid input (e.g. region "India") | `aws` was not recognised in VS Code terminals until VS Code restarted (PATH is inherited at launch). `aws configure` accepted and saved an invalid region (`India`, `dsasd`), an output format of `asdasd`, and the text "aws login" as an Access Key ID, with no warning. A secret key was also exposed in a screenshot during setup and had to be deleted | Medium | Cleared `~/.aws/credentials` and `config`; signed in with `aws login` (browser-based, short-lived credentials); deleted the exposed key with `aws iam delete-access-key` | Validate the region and output format in `aws configure`; check the access key format; recommend `aws login` before `aws configure` for new users | Resolved |
 
 > Add new rows here using the next ID (FL-003, FL-004…). Copy the [template](#6-real-incident-template) for detailed notes.
 

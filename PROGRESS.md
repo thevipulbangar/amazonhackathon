@@ -10,7 +10,7 @@ Last updated: Mon 19 Oct 2026
 - [x] Install the AWS CLI (2.38.1)
 - [ ] Ask the organisers for Alexa AI CLI access (gated, see friction log FL-003). **Biggest risk**
 - [ ] Create an Amazon Developer account
-- [ ] Create an IAM access key and run `aws configure` (region `us-east-1`)
+- [x] AWS CLI signed in with `aws login` (browser sign-in, no long-lived keys; region `us-east-1`)
 - [ ] Make the repo public; delete the old `amazonhackathon2026` repo
 
 ## Day 1, Mon: Server end to end
