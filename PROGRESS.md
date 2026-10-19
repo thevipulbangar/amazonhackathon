@@ -8,7 +8,7 @@ Last updated: Mon 19 Oct 2026
 - [x] Create an AWS account
 - [x] Create the GitHub repo with an MIT license
 - [x] Install the AWS CLI (2.38.1)
-- [ ] Ask the organisers for Alexa AI CLI access (gated, see friction log FL-003). **Biggest risk**
+- [x] Asked about Alexa AI CLI access: no support channel or answer found (Discord, forum). **Decision: simulator-first**
 - [ ] Create an Amazon Developer account
 - [x] AWS CLI set up (`aws login`)
 - [ ] **New personal AWS account.** The first account is an org sandbox that only allows Bedrock (friction log FL-007)
@@ -20,7 +20,7 @@ Last updated: Mon 19 Oct 2026
 - [x] End-to-end test, each tool ~5 ms against the 500 ms limit ([test_server.py](test_server.py))
 - [x] Friction log started ([friction-log.md](friction-log.md))
 - [ ] Deploy to Lambda with a public HTTPS URL; measure latency, including the slow first call after idle
-- [ ] Register with Alexa+ (`alexa-ai new mcp` → `alexa-ai deploy`), once CLI access arrives
+- [ ] ~~Register with Alexa+~~ Blocked (gated CLI, likely US-only). Documented in the friction log; try again only if access arrives
 
 ## Day 2, Tue: Core feature
 - [ ] DynamoDB storage, replacing in-memory storage
@@ -29,7 +29,7 @@ Last updated: Mon 19 Oct 2026
 
 ## Day 3, Wed: Product
 - [ ] Agent Skill (`skills/followthrough/SKILL.md`)
-- [ ] Simulated Alexa+ web app (start early if CLI access is still pending Tue evening)
+- [ ] **Simulated Alexa+ web app (main demo path)**
 - [ ] Escalation to an accountability buddy
 - [ ] Polish spoken replies; Hinglish example
 
